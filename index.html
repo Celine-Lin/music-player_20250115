@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音樂播放器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .music-player {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 320px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .song-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .controls button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .controls button:hover {
+      background-color: #45a049;
+    }
+
+    .progress-bar{
+        margin-top: 20px;
+    }
+
+    .progress {
+      height: 100%;
+      background-color: #4CAF50;
+      border-radius: 5px;
+    }
+
+    .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    /* 音量控制條 */
+    .volume-control input[type="range"] {
+      -webkit-appearance: none;
+      width: 100px;
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      outline: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .volume-control input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .volume-control input[type="range"]::-webkit-slider-thumb:hover {
+      background-color: #45a049;
+    }
+
+    .volume-control input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    /* 進度條滑塊 */
+    .progress-bar input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-bar input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .progress-bar input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="music-player">
+    <div class="song-name">歌曲名稱</div>
+
+    <div class="controls">
+      <button id="prevBtn"><<</button> <!-- Previous button -->
+      <button id="playBtn">&#9654;</button> <!-- Play button -->
+      <button id="nextBtn">>></button> <!-- Next button -->
+    </div>
+
+    <div class="progress-bar">
+      <input type="range" id="progress-bar" min="0" max="100" value="0">
+    </div>
+
+    <div class="volume-control">
+      <label for="volume">音量</label>
+      <input type="range" id="volume" min="0" max="100" value="50">
+    </div>
+
+    <!-- 
+    因為畫面上不會使用預設的控制介面(controls)，所以偏好不要使用 audio 標籤。直接在 JS 用 new Audio() 創建音樂比較好。
+    <audio id="audio" data-id="1" src="sounds/The Urban Groove - Hanu Dixit.mp3">
+        Your browser doen't support audio element.
+    </audio>     
+    -->
+  </div>
+
+  <script>
+    const songName = document.querySelector('.song-name');
+    const playBtn = document.getElementById('playBtn');
+    const progressBar = document.getElementById('progress-bar');
+    const volume = document.getElementById('volume');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    // 音樂來源：YouTube Audio Library
+    const songs = [
+      {
+        name: 'The Urban Groove',
+        source: 'sounds/The Urban Groove - Hanu Dixit.mp3'
+      },
+      {
+        name: 'Take it Slow',
+        source: 'sounds/Take it Slow - SefChol.mp3',
+      },
+      {
+        name: 'Tea Time',
+        source: 'sounds/Tea Time - Ofshane.mp3'
+      },      
+    ]
+
+    //--- 0. 創建音源
+    const audio = new Audio();
+    let currentSongIndex = 0;
+    playSong();
+
+    //--- 1. 播放/暫停音樂
+    function playSong(){
+      const song = songs[currentSongIndex];
+      audio.src = song.source;
+      songName.textContent = song.name;
+      audio.play();
+      playBtn.innerHTML = '&#10074;&#10074;'; // 顯示暫停按鈕
+    }
+    
+    playBtn.addEventListener('click', () => {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+        playBtn.innerHTML = '&#9654;'; // 顯示播放按鈕
+      }
+    });
+
+    //--- 2. 播放下一首和上一首音樂
+    // % 取餘數可以讓歌曲循環播放
+    prevBtn.addEventListener('click', () => {
+      currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+      playSong();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      playSong();
+    });
+
+    //--- 3. 更新進度條
+    audio.addEventListener('timeupdate', () => {
+      // 避免點選上下首歌時，audio.duration為 0 or NaN 的情況
+      const progressWidth = audio.duration > 0 ? (audio.currentTime / audio.duration) * 100 : 0;
+      progressBar.value = progressWidth;  // 更新進度條
+    });
+
+    //--- 4. 點擊進度條改變播放進度
+    progressBar.addEventListener('input', (e) => {
+      const newTime = (e.target.value / 100) * audio.duration;
+      audio.currentTime = newTime;
+    });
+
+    //--- 5. 音量控制
+    volume.addEventListener('input', () => {
+      audio.volume = volume.value / 100; // volume 的值是 0-1 間
+    });
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html{
+            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Audio 使用範例</h1>
+    <!-- 常見屬性：src、controls、autoplay、muted、loop、type(好習慣，但不寫也沒影響) -->
+    <h2>一、基本語法</h2>
+    <audio 
+        src="sounds/Take it Slow - SefChol.mp3"
+        controls
+        autoplay
+        muted
+        loop
+        type="audio/mpeg">
+        This browser does not support audio.
+    </audio>
+        
+    <h2>二、具兼容性的基本款</h2>
+    <audio controls id="audio">
+        <source src="sounds/Take it Slow - SefChol.wav" type="audio/wav">
+        <source src="sounds/Take it Slow - SefChol.mp3" type="audio/mpeg">
+        This browser does not support audio.
+    </audio>
+
+    <h2>三、控制音量</h2>
+    <p>Volume</p>
+    <input type="range" id="volume-ctrl" min="0" max="1" step="0.1" value="1">
+
+    <h2>四、使用 JS 不用 Audio 標籤</h2>
+    <button type="button" id="audio-play">▶︎ play</button>
+    <button type="button" id="audio-restart">restart</button>
+</body>
+</html>
+
+<script>
+    //---- 三、控制音量 ----//
+    const audio = document.getElementById('audio');
+    const vol = document.getElementById('volume-ctrl');
+
+    vol.addEventListener('input', function(){
+        audio.volume = this.value;
+    })
+
+    //---- 四、使用 JS 不用 Audio 標籤 ----//
+    const audio3 = new Audio("sounds/Take it Slow - SefChol.mp3");
+    /*
+        也可以一開始不指定音檔：
+        const audio4 = new Audio();
+        audio4.src = "sounds/Take it Slow - SefChol.mp3";   
+    */
+
+    // 4-1.控制播放
+    const audioPlay = document.getElementById('audio-play');
+    audioPlay.addEventListener('click', function(){
+        if(audio3.paused){
+            audioPlay.textContent = '⏹︎ paulse';
+            audio3.play();
+        }else{
+            audioPlay.textContent = '▶︎ play';
+            audio3.pause();
+        }
+    })
+    // 4-2.重新播放
+    const audioRestart = document.getElementById('audio-restart');
+    audioRestart.addEventListener('click', function(){
+        audio3.currentTime = 0;
+        audioPlay.textContent = '⏹︎ paulse';
+        audio3.play();
+    })
+</script>
